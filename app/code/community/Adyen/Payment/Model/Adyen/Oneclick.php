@@ -99,7 +99,7 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         if ($this->isCseEnabled()) {
             $method = $this->getCode();
             $encryptedData = $data->getData('encrypted_data_'.$method);
-            $info->setAdditionalInformation('encrypted_data', $encryptedData);
+            Mage::getSingleton('checkout/session')->getQuote()->setData('encrypted_data_'.$method, $encryptedData);
         } else {
 
             // check if expiry month and year is changed

@@ -223,10 +223,24 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     $this->card = null;
 
                     // this is only needed for creditcards
-                    if($payment->getAdditionalInformation("encrypted_data") != "" && $payment->getAdditionalInformation("encrypted_data") != "false" ) {
+                    if($paymentMethod == 'oneclick') {
+                        $info = $payment->getMethodInstance();
+                        $encryptedData = Mage::getSingleton('checkout/session')->getQuote()->getData('encrypted_data_'.$info->getCode());
+
+                        // remove it from the session
+                        Mage::getSingleton('checkout/session')->getQuote()->setData('encrypted_data_'.$info->getCode(), null);
+                        
+                    } else {
+                        $encryptedData = Mage::getSingleton('checkout/session')->getQuote()->getEncryptedData();
+
+                        // remove it from the session
+                        Mage::getSingleton('checkout/session')->getQuote()->setEncryptedData(null);
+                    }
+
+                    if($encryptedData != "" && $encryptedData != "false" ) {
                         $kv = new Adyen_Payment_Model_Adyen_Data_AdditionalDataKVPair();
                         $kv->key = new SoapVar("card.encrypted.json", XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
-                        $kv->value = new SoapVar($payment->getAdditionalInformation("encrypted_data"), XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
+                        $kv->value = new SoapVar($encryptedData, XSD_STRING, "string", "http://www.w3.org/2001/XMLSchema");
                         $this->additionalData->entry = $kv;
                     } else {
                         if($paymentMethod == 'cc') {
