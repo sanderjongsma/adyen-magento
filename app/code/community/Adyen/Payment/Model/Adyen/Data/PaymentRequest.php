@@ -225,16 +225,16 @@ class Adyen_Payment_Model_Adyen_Data_PaymentRequest extends Adyen_Payment_Model_
                     // this is only needed for creditcards
                     if($paymentMethod == 'oneclick') {
                         $info = $payment->getMethodInstance();
-                        $encryptedData = Mage::getSingleton('checkout/session')->getQuote()->getData('encrypted_data_'.$info->getCode());
+                        $encryptedData = Mage::getSingleton('checkout/session')->getData('encrypted_data_'.$info->getCode());
 
                         // remove it from the session
-                        Mage::getSingleton('checkout/session')->getQuote()->setData('encrypted_data_'.$info->getCode(), null);
+                        Mage::getSingleton('checkout/session')->setData('encrypted_data_'.$info->getCode(), null);
                         
                     } else {
-                        $encryptedData = Mage::getSingleton('checkout/session')->getQuote()->getEncryptedData();
+                        $encryptedData = Mage::getSingleton('checkout/session')->getEncryptedData();
 
                         // remove it from the session
-                        Mage::getSingleton('checkout/session')->getQuote()->setEncryptedData(null);
+                        Mage::getSingleton('checkout/session')->setEncryptedData(null);
                     }
 
                     if($encryptedData != "" && $encryptedData != "false" ) {
