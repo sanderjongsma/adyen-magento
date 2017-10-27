@@ -77,8 +77,10 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
 
         // get storeId
         if(Mage::app()->getStore()->isAdmin()) {
-            $store = Mage::getSingleton('adminhtml/session_quote')->getStore();
+            $session = Mage::getSingleton('adminhtml/session_quote');
+            $store = $session->getStore();
         } else {
+            $session = Mage::getSingleton('checkout/session');
             $store = Mage::app()->getStore();
         }
         $storeId = $store->getId();
@@ -99,7 +101,7 @@ class Adyen_Payment_Model_Adyen_Oneclick extends Adyen_Payment_Model_Adyen_Cc {
         if ($this->isCseEnabled()) {
             $method = $this->getCode();
             $encryptedData = $data->getData('encrypted_data_'.$method);
-            Mage::getSingleton('checkout/session')->setData('encrypted_data_'.$method, $encryptedData);
+            $session->setData('encrypted_data_'.$method, $encryptedData);
         } else {
 
             // check if expiry month and year is changed
